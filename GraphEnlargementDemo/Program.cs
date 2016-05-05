@@ -12,6 +12,7 @@ namespace GraphEnlargementDemo
     using System.Text;
     using System.Threading.Tasks;
     using GraphEnlargement;
+    using GraphEnlargement.Sanders;
     using QuickGraph;
     using QuickGraph.Graphviz;
 
@@ -35,19 +36,25 @@ namespace GraphEnlargementDemo
             };
 
             var graph = GraphBuilder.Build(input, x => x.LeftSize, x => x.RightSize);
+            Console.WriteLine(GenerateGraphvizDot(graph));
+            Console.WriteLine();
 
-            var graphviz = new GraphvizAlgorithm<MismatchedShoePerson, Edge<MismatchedShoePerson>>(graph);
-            graphviz.FormatVertex += (sender, eventArgs) =>
-                {
-                    eventArgs.VertexFormatter.Label = $"{eventArgs.Vertex.Name} [{eventArgs.Vertex.LeftSize}, {eventArgs.Vertex.RightSize}]";
-                };
+            var firstPass = new FirstPass().Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize});
+            Console.WriteLine(GenerateGraphvizDot(firstPass));
+            Console.WriteLine();
 
-            string output = graphviz.Generate();
-            Console.WriteLine(output);
 #if DEBUG
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
 #endif
+        }
+
+        private static string GenerateGraphvizDot(BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> graph)
+        {
+            var graphviz = new GraphvizAlgorithm<MismatchedShoePerson, Edge<MismatchedShoePerson>>(graph);
+            graphviz.FormatVertex += (sender, eventArgs) => { eventArgs.VertexFormatter.Label = $"{eventArgs.Vertex.Name} [{eventArgs.Vertex.LeftSize}, {eventArgs.Vertex.RightSize}]"; };
+
+            return graphviz.Generate();
         }
     }
 }
