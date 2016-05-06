@@ -43,6 +43,10 @@ namespace GraphEnlargementDemo
             Console.WriteLine(GenerateGraphvizDot(firstPass));
             Console.WriteLine();
 
+            var secondPass = new SecondPass().Apply(firstPass, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
+            Console.WriteLine(GenerateGraphvizDot(secondPass));
+            Console.WriteLine();
+
 #if DEBUG
             Console.WriteLine("Press any key to continue...");
             Console.ReadKey(true);
@@ -52,7 +56,7 @@ namespace GraphEnlargementDemo
         private static string GenerateGraphvizDot(BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> graph)
         {
             var graphviz = new GraphvizAlgorithm<MismatchedShoePerson, Edge<MismatchedShoePerson>>(graph);
-            graphviz.FormatVertex += (sender, eventArgs) => { eventArgs.VertexFormatter.Label = $"{eventArgs.Vertex.Name} [{eventArgs.Vertex.LeftSize}, {eventArgs.Vertex.RightSize}]"; };
+            graphviz.FormatVertex += (sender, eventArgs) => { eventArgs.VertexFormatter.Label = eventArgs.Vertex.ToString(); };
 
             return graphviz.Generate();
         }

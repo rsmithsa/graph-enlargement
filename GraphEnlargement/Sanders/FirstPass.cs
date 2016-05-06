@@ -31,7 +31,7 @@ namespace GraphEnlargement.Sanders
             var disconnected = new Stack<TVertex>(result.Vertices.Where(x => result.IsInEdgesEmpty(x) && result.IsOutEdgesEmpty(x)));
             var noInEdge = new Stack<TVertex>(result.Vertices.Where(x => result.IsInEdgesEmpty(x) && !result.IsOutEdgesEmpty(x)));
             var noOutEdge = new Stack<TVertex>(result.Vertices.Where(x => !result.IsInEdgesEmpty(x) && result.IsOutEdgesEmpty(x)));
-            var use = new Queue<TVertex>(result.Vertices.Where(x => !result.IsInEdgesEmpty(x) && !result.IsOutEdgesEmpty(x)));
+            var use = new Queue<TVertex>(result.Vertices.Where(x => !result.IsInEdgesEmpty(x) && !result.IsOutEdgesEmpty(x)).Reverse());
 
             while (disconnected.Count > 0 || noInEdge.Count > 0 || noOutEdge.Count > 0)
             {

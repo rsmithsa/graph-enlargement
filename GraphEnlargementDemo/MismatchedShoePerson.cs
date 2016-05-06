@@ -34,5 +34,14 @@ namespace GraphEnlargementDemo
         /// </summary>
         /// <value>The size of the right shoe.</value>
         public int RightSize { get; set; }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+        public override string ToString()
+        {
+            return $"{this.Name} [{this.LeftSize}, {this.RightSize}]";
+        }
     }
 }
