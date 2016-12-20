@@ -1,10 +1,10 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="SecondPass.cs" company="Richard Smith">
+// <copyright file="CostOptimisedSecondPass.cs" company="Richard Smith">
 //     Copyright (c) Richard Smith. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace GraphEnlargement.Sanders
+namespace GraphEnlargement.VanDerLinde
 {
     using System;
     using System.Collections.Generic;
@@ -15,15 +15,14 @@ namespace GraphEnlargement.Sanders
     using QuickGraph.Algorithms;
 
     /// <summary>
-    /// The second pass graph expansion algorith from:
-    /// I. Sanders. Cooperating to buy shoes: An application of picking cycles in directed graphs.
-    /// In Proceedings of the South African Institute of Computer Scientists and Information Technologists (Theme: "A Connected Society"), pages 8-16, East London, 2013.
+    /// The second pass cost optimised graph expansion algorithm from:
+    /// J. van der Linde, I. Sanders. Enlarging Directed Graphs To Ensure All Nodes Are Contained In Cycles.
+    /// In Proceedings of the South African Institute of Computer Scientists and Information Technologists, 2015.
     /// </summary>
-    public class SecondPass : IGraphEnlargementAlgorithm
+    public class CostOptimisedSecondPass : IGraphEnlargementAlgorithm
     {
         /// <inheritdoc/>
-        public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory)
-            where TVertex : class
+        public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory) where TVertex : class
         {
             var result = inputGraph.Clone();
 
