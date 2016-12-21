@@ -29,8 +29,8 @@ namespace GraphEnlargement.VanDerLinde
             IDictionary<TVertex, int> components;
             var c = result.StronglyConnectedComponents(out components);
 
-            IDictionary<TVertex, int> weakComponents = new Dictionary<TVertex, int>(components);
-            var w = result.WeaklyConnectedComponents(weakComponents);
+            var t = new J<TVertex>();
+            t.Process(result);
 
             var grouped = components.GroupBy(x => x.Value, x => x.Key).ToArray();
 

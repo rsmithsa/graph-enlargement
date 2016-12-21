@@ -16,6 +16,7 @@ namespace GraphEnlargement
         private Dictionary<TVertex, bool> blocked = new Dictionary<TVertex, bool>();
         private Dictionary<TVertex, List<TVertex>> blockedVertices = new Dictionary<TVertex, List<TVertex>>();
         private List<Stack<TVertex>> cycles = new List<Stack<TVertex>>();
+        private List<TVertex> vertices = new List<TVertex>();
 
         public JohnsonsAlgorithm(IAlgorithmComponent host, IVertexListGraph<TVertex, TEdge> visitedGraph)
             : base(host, visitedGraph)
@@ -32,14 +33,45 @@ namespace GraphEnlargement
             this.blocked.Clear();
             this.blockedVertices.Clear();
             Stack<TVertex> stack = new Stack<TVertex>();
-            int s = 1;
-            while (s < this.VisitedGraph.VertexCount)
+            this.vertices.Clear();
+            this.vertices.AddRange(this.VisitedGraph.Vertices);
+
+            int s = 0;
+            /*if (this.VisitedGraph.VertexCount > 0)
             {
-                IVertexListGraph<TVertex, TEdge> subGraph = subGraphFrom(s, dg);
+                var s = LeastVertex(this.VisitedGraph);
+                var done = false;
+                while (!done)
+                {
+                    IVertexListGraph<TVertex, TEdge> subGraph = SubGraphFrom(s, this.VisitedGraph);
+                    IVertexListGraph<TVertex, TEdge> leastScc = leastSCC(subGraph);
+                    if (leastScc.VertexCount > 0)
+                    {
+                        s = LeastVertex(leastScc);
+
+                        foreach (var vertex in leastScc.Vertices)
+                        {
+                            this.blocked[vertex] = false;
+                            this.blockedVertices[vertex] = new List<TVertex>();
+                        }
+
+                        bool dummy = this.Circuit(leastScc, s, s, stack);
+                        s++;
+                    }
+                    else
+                    {
+                        done = true;
+                    }
+                }
+            }*/
+            
+            while (s < this.vertices.Count)
+            {
+                IVertexListGraph<TVertex, TEdge> subGraph = SubGraphFrom(s, this.VisitedGraph);
                 IVertexListGraph<TVertex, TEdge> leastScc = leastSCC(subGraph);
                 if (leastScc.VertexCount > 0)
                 {
-                    s = LeastVertex(leastScc);
+                    s = LeastVertex(leastScc.Vertices);
 
                     foreach (var vertex in leastScc.Vertices)
                     {
@@ -52,7 +84,7 @@ namespace GraphEnlargement
                 }
                 else
                 {
-                    s = this.VisitedGraph.VertexCount;
+                    s = this.vertices.count;
                 }
             }
         }
@@ -138,46 +170,67 @@ namespace GraphEnlargement
             return f;
         }
 
-        private static TVertex LeastVertex(IVertexListGraph<TVertex, TEdge> inGraph)
+        private TVertex LeastVertex(IEnumerable<TVertex> vertices)
         {
-            var idFunction = inGraph.GetVertexIdentity();
-
-            TVertex result = default(TVertex);
-            string maxId = null;
-            foreach (TVertex i in inGraph.Vertices)
+            int result = int.MaxValue;
+            foreach (var vertex in vertices)
             {
-                var id = idFunction(i);
-
-                if (maxId == null || string.Compare(id, maxId, StringComparison.Ordinal) < 0)
+                var idx = this.vertices.IndexOf(vertex);
+                if (idx < result)
                 {
-                    result = i;
-                    maxId = id;
+                    result = idx;
                 }
             }
 
-            return result;
+            return this.vertices[result];
         }
 
-        private static IVertexListGraph<TVertex, TEdge> subGraphFrom(TVertex i, IVertexListGraph<TVertex, TEdge> inGraph)
+        private static IVertexListGraph<TVertex, TEdge> SubGraphFrom(TVertex i, IVertexListGraph<TVertex, TEdge> inGraph)
         {
-            DirectedGraph<Integer, WeightedEdge> result = new DirectedSparseGraph<Integer, WeightedEdge>();
+            var result = new BidirectionalGraph<TVertex, Edge<TVertex>>();
+            var idFunction = inGraph.GetVertexIdentity();
+            var id = idFunction(i);
             foreach (TVertex from in inGraph.Vertices)
             {
-                if (from >= i)
+                var fromId = idFunction(from);
+                if (string.Compare(fromId, id, StringComparison.Ordinal) >= 0)
                 {
                     foreach (TVertex to in inGraph.OutEdges(from).Select(x => x.Target))
                     {
-                        if (to >= i)
+                        var toId = idFunction(to);
+                        if (string.Compare(toId, id, StringComparison.Ordinal) >= 0)
                         {
-                            result.addEdge(in.findEdge(from, to), from, to);
+                            if (!result.ContainsVertex(from))
+                            {
+                                result.AddVertex(from);
+                            }
+
+                            result.AddVertex(to);
                         }
                     }
                 }
             }
 
-            return result;
+            return (IVertexListGraph<TVertex, TEdge>)result;
         }
 
+        public static DirectedGraph<Integer, WeightedEdge> leastSCC(DirectedGraph<Integer, WeightedEdge> dg) throws JohnsonIllegalStateException
+        {
+            Tarjan<Integer, WeightedEdge> t = new Tarjan<Integer, WeightedEdge>(dg);
+    	List<List<Integer>> sccs = t.tarjan();
+        Integer min = Integer.MAX_VALUE;
+        List<Integer> minScc = new ArrayList<Integer>();
+        for (List<Integer> scc : sccs) {
+            if (scc.size() == 1) { continue; }
+            for (Integer i : scc) {
+                if (i<min) {
+                    minScc = scc;
+                    min = i;
+                }
+}
+        }
+        return addEdges(minScc, dg);
+}
     }
 }
 
