@@ -45,6 +45,7 @@ namespace GraphEnlargement.VanDerLinde
             where TVertex : class
         {
             var result = inputGraph.Clone();
+            var subGraph = inputGraph.Clone();
 
             var cycles = result.GetCycles();
 
@@ -87,11 +88,28 @@ namespace GraphEnlargement.VanDerLinde
             {
                 foreach (var vertex in cycle)
                 {
-                    result.RemoveVertex(vertex);
+                    subGraph.RemoveVertex(vertex);
                 }
             }
 
-            return this.subAlgorithm.Apply(result, vertexFactory);
+            foreach (var vertex in subGraph.Vertices)
+            {
+                result.RemoveVertex(vertex);
+            }
+
+            subGraph = this.subAlgorithm.Apply(subGraph, vertexFactory);
+
+            foreach (var vertex in subGraph.Vertices)
+            {
+                result.AddVertex(vertex);
+            }
+
+            foreach (var edge in subGraph.Edges)
+            {
+                result.AddEdge(edge);
+            }
+
+            return result;
         }
     }
 }

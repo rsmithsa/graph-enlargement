@@ -69,7 +69,7 @@ namespace GraphEnlargementDemo
             Console.WriteLine(GenerateGraphvizDot(graph));
             Console.WriteLine();
 
-            var firstPass = new Permutation().Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
+            var firstPass = new Subgraph(new Permutation()).Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
             Console.WriteLine(GenerateGraphvizDot(firstPass));
             Console.WriteLine();
 
