@@ -24,7 +24,7 @@ namespace GraphEnlargementDemo
     {
         private static void Main(string[] args)
         {
-            /*var input = new List<MismatchedShoePerson>()
+            var input = new List<MismatchedShoePerson>()
             {
                 new MismatchedShoePerson() { Name = "Monde", LeftSize = 11, RightSize = 9 },
                 new MismatchedShoePerson() { Name = "John", LeftSize = 12, RightSize = 10 },
@@ -34,7 +34,7 @@ namespace GraphEnlargementDemo
                 new MismatchedShoePerson() { Name = "Yoosuf", LeftSize = 9, RightSize = 10 },
                 new MismatchedShoePerson() { Name = "Kopano", LeftSize = 7, RightSize = 6 },
                 new MismatchedShoePerson() { Name = "Mark", LeftSize = 6, RightSize = 7 },
-            };*/
+            };
 
             /*var input = new List<MismatchedShoePerson>()
             {
@@ -49,7 +49,7 @@ namespace GraphEnlargementDemo
                 new MismatchedShoePerson() { Name = "Ike", LeftSize = 5, RightSize = 12 },
             };*/
 
-            var input = new List<MismatchedShoePerson>()
+            /*var input = new List<MismatchedShoePerson>()
             {
                 new MismatchedShoePerson() { Name = "Adam", LeftSize = 7, RightSize = 8 },
                 new MismatchedShoePerson() { Name = "Bob", LeftSize = 8, RightSize = 7 },
@@ -63,13 +63,13 @@ namespace GraphEnlargementDemo
                 new MismatchedShoePerson() { Name = "Jim", LeftSize = 11, RightSize = 13 },
                 new MismatchedShoePerson() { Name = "Kenny", LeftSize = 12, RightSize = 11 },
                 new MismatchedShoePerson() { Name = "Larry", LeftSize = 12, RightSize = 14 },
-            };
+            };*/
 
             var graph = GraphBuilder.Build(input, x => x.LeftSize, x => x.RightSize);
             Console.WriteLine(GenerateGraphvizDot(graph));
             Console.WriteLine();
 
-            var firstPass = new Subgraph(new Permutation()).Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
+            var firstPass = new Permutation().Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
             Console.WriteLine(GenerateGraphvizDot(firstPass));
             Console.WriteLine();
 
