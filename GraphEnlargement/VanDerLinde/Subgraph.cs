@@ -11,6 +11,8 @@ namespace GraphEnlargement.VanDerLinde
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using Combinatorics.Collections;
+    using MoreLinq;
     using QuickGraph;
     using QuickGraph.Algorithms;
 
@@ -21,28 +23,75 @@ namespace GraphEnlargement.VanDerLinde
     /// </summary>
     public class Subgraph : IGraphEnlargementAlgorithm
     {
+        private readonly IGraphEnlargementAlgorithm subAlgorithm;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Subgraph"/> class.
+        /// </summary>
+        /// <param name="subAlgorithm">The sub algorithm to run.</param>
+        /// <exception cref="ArgumentNullException">The <paramref name="subAlgorithm"/> is null.</exception>
+        public Subgraph(IGraphEnlargementAlgorithm subAlgorithm)
+        {
+            if (subAlgorithm == null)
+            {
+                throw new ArgumentNullException(nameof(subAlgorithm));
+            }
+
+            this.subAlgorithm = subAlgorithm;
+        }
+
         /// <inheritdoc/>
-        public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory) where TVertex : class
+        public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory)
+            where TVertex : class
         {
             var result = inputGraph.Clone();
 
-            IDictionary<TVertex, int> components;
-            var c = result.StronglyConnectedComponents(out components);
+            var cycles = result.GetCycles();
 
-            var t = new J<TVertex>();
-            t.Process(result);
-
-            var grouped = components.GroupBy(x => x.Value, x => x.Key).ToArray();
-
-            var cycles = new HashSet<TVertex>(grouped.Where(x => x.Count() > 1).SelectMany(x => x));
-            var noCycles = result.GetVerticesNotInCycles();
-
-            foreach (var vertex in cycles)
+            var nonRepeatedCycles = new List<IList<TVertex[]>>();
+            for (int i = 1; i <= cycles.Count; i++)
             {
-                result.RemoveVertex(vertex);
+                var combinations = new Combinations<TVertex[]>(cycles, i);
+                bool any = false;
+                foreach (var combination in combinations)
+                {
+                    var set = new HashSet<TVertex>();
+                    bool success = true;
+                    foreach (var vertex in combination.SelectMany(x => x))
+                    {
+                        if (!set.Add(vertex))
+                        {
+                            success = false;
+                            break;
+                        }
+                    }
+
+                    if (success)
+                    {
+                        any = true;
+                        nonRepeatedCycles.Add(combination);
+                    }
+                }
+
+                if (!any)
+                {
+                    break;
+                }
             }
 
-            return result;
+            // Reverse needed to match behaviour of van der Linde.
+            nonRepeatedCycles.Reverse();
+            var longest = nonRepeatedCycles.MaxBy(x => x.SelectMany(y => y).Count());
+
+            foreach (var cycle in longest)
+            {
+                foreach (var vertex in cycle)
+                {
+                    result.RemoveVertex(vertex);
+                }
+            }
+
+            return this.subAlgorithm.Apply(result, vertexFactory);
         }
     }
 }

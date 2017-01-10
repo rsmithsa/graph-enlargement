@@ -22,7 +22,8 @@ namespace GraphEnlargement.VanDerLinde
     public class CostOptimisedFirstPass : IGraphEnlargementAlgorithm
     {
         /// <inheritdoc/>
-        public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory) where TVertex : class
+        public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory)
+            where TVertex : class
         {
             var result = inputGraph.Clone();
 

@@ -9,6 +9,7 @@ namespace GraphEnlargement
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using QuickGraph;
@@ -19,6 +20,11 @@ namespace GraphEnlargement
         public static HashSet<TVertex> GetVerticesNotInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
             where TVertex : class
         {
+            if (inputGraph == null)
+            {
+                throw new ArgumentNullException(nameof(inputGraph));
+            }
+
             IDictionary<TVertex, int> components;
             inputGraph.StronglyConnectedComponents(out components);
 
@@ -32,26 +38,31 @@ namespace GraphEnlargement
             return result;
         }
 
-        public static HashSet<TVertex> GetCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
-           where TVertex : class
+        public static HashSet<TVertex> GetVerticesInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph) where TVertex : class
         {
-            IDictionary<TVertex, int> components;
-            inputGraph.StronglyConnectedComponents(out components);
-
-            var grouped = components.GroupBy(x => x.Value, x => x.Key).ToArray();
-
-            var stronglyConnected = new HashSet<TVertex>(grouped.Where(x => x.Count() > 1).SelectMany(x => x));
-
-            // All individual strongly connected vertices with self edges (i.e. single vertex cycles).
-            var result = new HashSet<TVertex>(
-                    grouped.Where(x => x.Count() == 1).SelectMany(x => x).Where(v => inputGraph.InEdges(v).Any(e => e.IsSelfEdge<TVertex, Edge<TVertex>>())));
-
-            foreach (var stronglyConnectedComponent in stronglyConnected)
+            if (inputGraph == null)
             {
-                   
+                throw new ArgumentNullException(nameof(inputGraph));
             }
 
-            return result;
+            var vertices = new HashSet<TVertex>(inputGraph.Vertices);
+
+            vertices.ExceptWith(inputGraph.GetVerticesNotInCycles());
+
+            return vertices;
+        }
+
+        public static IList<TVertex[]> GetCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
+           where TVertex : class
+        {
+            if (inputGraph == null)
+            {
+                throw new ArgumentNullException(nameof(inputGraph));
+            }
+
+            var johnsons = new JohnsonsAlgorithm<TVertex>();
+            johnsons.Process(inputGraph);
+            return johnsons.Cycles;
         }
     }
 }
