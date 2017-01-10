@@ -4,6 +4,8 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
+using GraphEnlargement.Smith;
+
 namespace GraphEnlargementDemo
 {
     using System;
@@ -24,7 +26,8 @@ namespace GraphEnlargementDemo
     {
         private static void Main(string[] args)
         {
-            var input = new List<MismatchedShoePerson>()
+            var input = GenerateInput(50, 42);
+            /*var input = new List<MismatchedShoePerson>()
             {
                 new MismatchedShoePerson() { Name = "Monde", LeftSize = 11, RightSize = 9 },
                 new MismatchedShoePerson() { Name = "John", LeftSize = 12, RightSize = 10 },
@@ -34,7 +37,7 @@ namespace GraphEnlargementDemo
                 new MismatchedShoePerson() { Name = "Yoosuf", LeftSize = 9, RightSize = 10 },
                 new MismatchedShoePerson() { Name = "Kopano", LeftSize = 7, RightSize = 6 },
                 new MismatchedShoePerson() { Name = "Mark", LeftSize = 6, RightSize = 7 },
-            };
+            };*/
 
             /*var input = new List<MismatchedShoePerson>()
             {
@@ -66,12 +69,19 @@ namespace GraphEnlargementDemo
             };*/
 
             var graph = GraphBuilder.Build(input, x => x.LeftSize, x => x.RightSize);
-            Console.WriteLine(GenerateGraphvizDot(graph));
+            var inputDot = GenerateGraphvizDot(graph);
+            Console.WriteLine(inputDot);
             Console.WriteLine();
 
-            var firstPass = new Subgraph(new Permutation()).Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
-            Console.WriteLine(GenerateGraphvizDot(firstPass));
+            var firstPass = new RevisedSubGraph(new Permutation()).Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
+            var output1Dot = GenerateGraphvizDot(firstPass);
+            Console.WriteLine(output1Dot);
             Console.WriteLine();
+
+            if (firstPass.GetVerticesNotInCycles().Count != 0)
+            {
+                Console.WriteLine("Oops");
+            }
 
             /*var secondPass = new SecondPass().Apply(firstPass, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
             Console.WriteLine(GenerateGraphvizDot(secondPass));
@@ -89,6 +99,20 @@ namespace GraphEnlargementDemo
             graphviz.FormatVertex += (sender, eventArgs) => { eventArgs.VertexFormatter.Label = eventArgs.Vertex.ToString(); };
 
             return graphviz.Generate();
+        }
+
+        private static List<MismatchedShoePerson> GenerateInput(int count, int seed)
+        {
+            var result = new List<MismatchedShoePerson>();
+            var random = new Random(seed);
+
+            for (int i = 0; i < count; i++)
+            {
+                var item = new MismatchedShoePerson() { Name = $"Node {i + 1}", LeftSize = random.Next(1, 30), RightSize = random.Next(1, 30) };
+                result.Add(item);
+            }
+
+            return result;
         }
     }
 }
