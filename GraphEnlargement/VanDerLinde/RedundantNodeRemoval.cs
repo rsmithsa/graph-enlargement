@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="CostOptimisedSecondPass.cs" company="Richard Smith">
+// <copyright file="RedundantNodeRemoval.cs" company="Richard Smith">
 //     Copyright (c) Richard Smith. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -12,14 +12,13 @@ namespace GraphEnlargement.VanDerLinde
     using System.Text;
     using System.Threading.Tasks;
     using QuickGraph;
-    using QuickGraph.Algorithms;
 
     /// <summary>
-    /// The second pass cost optimised graph expansion algorithm from:
+    /// The redundant node removal algorithm from:
     /// J. van der Linde, I. Sanders. Enlarging Directed Graphs To Ensure All Nodes Are Contained In Cycles.
     /// In Proceedings of the South African Institute of Computer Scientists and Information Technologists, 2015.
     /// </summary>
-    public class CostOptimisedSecondPass : IGraphEnlargementAlgorithm
+    public class RedundantNodeRemoval : IGraphEnlargementAlgorithm
     {
         /// <inheritdoc/>
         public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory)
@@ -27,31 +26,23 @@ namespace GraphEnlargement.VanDerLinde
         {
             var result = inputGraph.Clone();
 
-            HashSet<TVertex> noCycles = result.GetVerticesNotInCycles();
-
-            while (noCycles.Count > 0)
+            foreach (var vertex in inputGraph.Vertices)
             {
-                var x = noCycles.First();
-
-                var b = result.OutEdges(x).First().Target;
-                while (noCycles.Contains(b))
+                if (vertex.GetKey().Equals(vertex.GetTarget()))
                 {
-                    b = result.OutEdges(b).First().Target;
+                    var inEdges = result.InEdges(vertex);
+                    var outEdges = result.OutEdges(vertex);
+
+                    foreach (var inEdge in inEdges)
+                    {
+                        foreach (var outEdge in outEdges)
+                        {
+                            result.AddEdge(new Edge<TVertex>(inEdge.Source, outEdge.Target));
+                        }
+                    }
+
+                    result.RemoveVertex(vertex);
                 }
-
-                var e = result.InEdges(x).First().Source;
-                while (noCycles.Contains(e))
-                {
-                    e = result.InEdges(e).First().Source;
-                }
-
-                var dummy = vertexFactory("Dummy", b, e);
-                result.AddVertex(dummy);
-
-                result.AddEdge(new Edge<TVertex>(b, dummy));
-                result.AddEdge(new Edge<TVertex>(dummy, e));
-
-                noCycles = result.GetVerticesNotInCycles();
             }
 
             return result;

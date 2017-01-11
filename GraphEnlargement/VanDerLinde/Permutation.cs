@@ -20,9 +20,28 @@ namespace GraphEnlargement.VanDerLinde
     /// </summary>
     public class Permutation : IGraphEnlargementAlgorithm
     {
+        private readonly bool removeRedunantVertices;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Permutation"/> class.
+        /// </summary>
+        public Permutation()
+            : this(true)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Permutation"/> class.
+        /// </summary>
+        /// <param name="removeRedunantVertices">if set to <c>true</c> remove redunant vertices from the output.</param>
+        public Permutation(bool removeRedunantVertices)
+        {
+            this.removeRedunantVertices = removeRedunantVertices;
+        }
+
         /// <inheritdoc/>
         public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory)
-            where TVertex : class
+            where TVertex : class, IGraphEnlargementVertex
         {
             var verticesMap = inputGraph.Vertices.Select((x, i) => new { Vertex = x, Index = i }).ToDictionary(x => x.Index, x => x.Vertex);
             var reverseVerticesMap = verticesMap.ToDictionary(x => x.Value, x => x.Key);
@@ -112,7 +131,7 @@ namespace GraphEnlargement.VanDerLinde
                 result.AddEdge(new Edge<TVertex>(dummy, target));
             }
 
-            return result;
+            return this.removeRedunantVertices ? new RedundantNodeRemoval().Apply(result, vertexFactory) : result;
         }
 
         private static void RemoveEdge<TVertex>(Dictionary<int, TVertex> verticesMap, int x, int y, BidirectionalGraph<TVertex, Edge<TVertex>> graph)

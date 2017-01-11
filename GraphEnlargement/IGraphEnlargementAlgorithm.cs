@@ -26,6 +26,6 @@ namespace GraphEnlargement
         /// <param name="vertexFactory">The vertex factory function.</param>
         /// <returns>The resulting graph after applying the algorithm.</returns>
         BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory)
-            where TVertex : class;
+            where TVertex : class, IGraphEnlargementVertex;
     }
 }

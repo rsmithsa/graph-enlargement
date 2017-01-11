@@ -69,6 +69,7 @@
     <Compile Include="GraphBuilder.cs" />
     <Compile Include="GraphExtensions.cs" />
     <Compile Include="IGraphEnlargementAlgorithm.cs" />
+    <Compile Include="IGraphEnlargementVertex.cs" />
     <Compile Include="JohnsonsAlgorithm.cs" />
     <Compile Include="LinqExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="VanDerLinde\CostOptimisedSecondPass.cs" />
     <Compile Include="VanDerLinde\CostOptimisedFirstPass.cs" />
     <Compile Include="VanDerLinde\Permutation.cs" />
+    <Compile Include="VanDerLinde\RedundantNodeRemoval.cs" />
     <Compile Include="VanDerLinde\Subgraph.cs" />
   </ItemGroup>
   <ItemGroup>

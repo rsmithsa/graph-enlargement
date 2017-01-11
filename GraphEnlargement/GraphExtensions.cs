@@ -17,8 +17,7 @@ namespace GraphEnlargement
 
     public static class GraphExtensions
     {
-        public static HashSet<TVertex> GetVerticesNotInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
-            where TVertex : class
+        public static HashSet<TVertex> GetVerticesNotInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph) where TVertex : class
         {
             if (inputGraph == null)
             {
@@ -52,8 +51,7 @@ namespace GraphEnlargement
             return vertices;
         }
 
-        public static IList<TVertex[]> GetCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
-           where TVertex : class
+        public static IList<TVertex[]> GetCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph) where TVertex : class
         {
             if (inputGraph == null)
             {
@@ -63,6 +61,11 @@ namespace GraphEnlargement
             var johnsons = new JohnsonsAlgorithm<TVertex>();
             johnsons.Process(inputGraph);
             return johnsons.Cycles;
+        }
+
+        public static string GetDescription<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
+        {
+            return $"(Vertices - {inputGraph.VertexCount}, Edges - {inputGraph.EdgeCount})";
         }
     }
 }

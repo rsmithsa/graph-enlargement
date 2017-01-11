@@ -4,8 +4,6 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-using GraphEnlargement.Smith;
-
 namespace GraphEnlargementDemo
 {
     using System;
@@ -15,6 +13,7 @@ namespace GraphEnlargementDemo
     using System.Threading.Tasks;
     using GraphEnlargement;
     using GraphEnlargement.Sanders;
+    using GraphEnlargement.Smith;
     using GraphEnlargement.VanDerLinde;
     using QuickGraph;
     using QuickGraph.Graphviz;
@@ -26,7 +25,7 @@ namespace GraphEnlargementDemo
     {
         private static void Main(string[] args)
         {
-            var input = GenerateInput(50, 42);
+            var input = GenerateInput(50, 42, true);
             /*var input = new List<MismatchedShoePerson>()
             {
                 new MismatchedShoePerson() { Name = "Monde", LeftSize = 11, RightSize = 9 },
@@ -70,18 +69,22 @@ namespace GraphEnlargementDemo
 
             var graph = GraphBuilder.Build(input, x => x.LeftSize, x => x.RightSize);
             var inputDot = GenerateGraphvizDot(graph);
-            Console.WriteLine(inputDot);
-            Console.WriteLine();
+            Console.WriteLine($"Input: {GetGraphInformation(graph)}");
 
-            var firstPass = new RevisedSubGraph(new Permutation()).Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
-            var output1Dot = GenerateGraphvizDot(firstPass);
-            Console.WriteLine(output1Dot);
-            Console.WriteLine();
+            var permutation = new Permutation(false)
+                .Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
+            var permutationDot = GenerateGraphvizDot(permutation);
+            Console.WriteLine($"Permutation: {GetGraphInformation(permutation)}");
 
-            if (firstPass.GetVerticesNotInCycles().Count != 0)
-            {
-                Console.WriteLine("Oops");
-            }
+            var permutationPrune = new Permutation(true)
+                .Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
+            var permutationPruneDot = GenerateGraphvizDot(permutationPrune);
+            Console.WriteLine($"Permutation Pruned: {GetGraphInformation(permutationPrune)}");
+
+            var revisedSubGraphPermutation = new RevisedSubGraph(new Permutation())
+                .Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
+            var revisedSubGraphPermutationDot = GenerateGraphvizDot(revisedSubGraphPermutation);
+            Console.WriteLine($"Revised Sub Graph - Permutation: {GetGraphInformation(revisedSubGraphPermutation)}");
 
             /*var secondPass = new SecondPass().Apply(firstPass, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
             Console.WriteLine(GenerateGraphvizDot(secondPass));
@@ -101,7 +104,30 @@ namespace GraphEnlargementDemo
             return graphviz.Generate();
         }
 
-        private static List<MismatchedShoePerson> GenerateInput(int count, int seed)
+        private static string GetGraphInformation(BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> graph)
+        {
+            return $"{graph.GetDescription()}{Environment.NewLine}Edges Valid: {(ValidateEdges(graph) ? "Yes" : "No")}{Environment.NewLine}Cycles Valid: {(ValidateCycles(graph) ? "Yes" : "No")}{Environment.NewLine}";
+        }
+
+        private static bool ValidateCycles(BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> graph)
+        {
+            return graph.GetVerticesNotInCycles().Count == 0;
+        }
+
+        private static bool ValidateEdges(BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> graph)
+        {
+            foreach (var edge in graph.Edges)
+            {
+                if (edge.Source.LeftSize != edge.Target.RightSize)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static List<MismatchedShoePerson> GenerateInput(int count, int seed, bool excludeSelfCycles)
         {
             var result = new List<MismatchedShoePerson>();
             var random = new Random(seed);
@@ -109,6 +135,12 @@ namespace GraphEnlargementDemo
             for (int i = 0; i < count; i++)
             {
                 var item = new MismatchedShoePerson() { Name = $"Node {i + 1}", LeftSize = random.Next(1, 30), RightSize = random.Next(1, 30) };
+                if (excludeSelfCycles && item.LeftSize == item.RightSize)
+                {
+                    i--;
+                    continue;
+                }
+
                 result.Add(item);
             }
 

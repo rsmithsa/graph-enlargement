@@ -42,7 +42,7 @@ namespace GraphEnlargement.VanDerLinde
 
         /// <inheritdoc/>
         public BidirectionalGraph<TVertex, Edge<TVertex>> Apply<TVertex>(BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph, Func<string, TVertex, TVertex, TVertex> vertexFactory)
-            where TVertex : class
+            where TVertex : class, IGraphEnlargementVertex
         {
             var result = inputGraph.Clone();
             var subGraph = inputGraph.Clone();

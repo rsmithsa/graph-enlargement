@@ -11,11 +11,12 @@ namespace GraphEnlargementDemo
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using GraphEnlargement;
 
     /// <summary>
     /// A person with differing left and right shoe sizes.
     /// </summary>
-    internal class MismatchedShoePerson
+    internal class MismatchedShoePerson : IGraphEnlargementVertex
     {
         /// <summary>
         /// Gets or sets the name of the person.
@@ -42,6 +43,16 @@ namespace GraphEnlargementDemo
         public override string ToString()
         {
             return $"{this.Name} [{this.LeftSize}, {this.RightSize}]";
+        }
+
+        public object GetKey()
+        {
+            return this.LeftSize;
+        }
+
+        public object GetTarget()
+        {
+            return this.RightSize;
         }
     }
 }
