@@ -81,7 +81,7 @@ namespace GraphEnlargementDemo
             var permutationPruneDot = GenerateGraphvizDot(permutationPrune);
             Console.WriteLine($"Permutation Pruned: {GetGraphInformation(permutationPrune)}");
 
-            var revisedSubGraphPermutation = new RevisedSubGraph(new Permutation())
+            var revisedSubGraphPermutation = new RevisedSubgraph(new Permutation())
                 .Apply(graph, (name, inVertex, outVertex) => new MismatchedShoePerson() { Name = name, LeftSize = outVertex.RightSize, RightSize = inVertex.LeftSize });
             var revisedSubGraphPermutationDot = GenerateGraphvizDot(revisedSubGraphPermutation);
             Console.WriteLine($"Revised Sub Graph - Permutation: {GetGraphInformation(revisedSubGraphPermutation)}");

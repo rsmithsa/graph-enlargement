@@ -1,5 +1,5 @@
 ﻿//-----------------------------------------------------------------------
-// <copyright file="RevisedSubGraph.cs" company="Richard Smith">
+// <copyright file="RevisedSubgraph.cs" company="Richard Smith">
 //     Copyright (c) Richard Smith. All rights reserved.
 // </copyright>
 //-----------------------------------------------------------------------
@@ -17,16 +17,16 @@ namespace GraphEnlargement.Smith
     /// The revised subgraph graph expansion algorithm from:
     /// R. Smith. Research Project - Cycle Picking and Graph Enlargement - Permutation Subgraphs.
     /// </summary>
-    public class RevisedSubGraph : IGraphEnlargementAlgorithm
+    public class RevisedSubgraph : IGraphEnlargementAlgorithm
     {
         private readonly IGraphEnlargementAlgorithm subAlgorithm;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RevisedSubGraph"/> class.
+        /// Initializes a new instance of the <see cref="RevisedSubgraph"/> class.
         /// </summary>
         /// <param name="subAlgorithm">The sub algorithm to run.</param>
         /// <exception cref="ArgumentNullException">The <paramref name="subAlgorithm"/> is null.</exception>
-        public RevisedSubGraph(IGraphEnlargementAlgorithm subAlgorithm)
+        public RevisedSubgraph(IGraphEnlargementAlgorithm subAlgorithm)
         {
             if (subAlgorithm == null)
             {

@@ -72,10 +72,11 @@
     <Compile Include="IGraphEnlargementVertex.cs" />
     <Compile Include="JohnsonsAlgorithm.cs" />
     <Compile Include="LinqExtensions.cs" />
+    <Compile Include="MismatchedShoePerson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sanders\FirstPass.cs" />
     <Compile Include="Sanders\SecondPass.cs" />
-    <Compile Include="Smith\RevisedSubGraph.cs" />
+    <Compile Include="Smith\RevisedSubgraph.cs" />
     <Compile Include="VanDerLinde\CostOptimisedSecondPass.cs" />
     <Compile Include="VanDerLinde\CostOptimisedFirstPass.cs" />
     <Compile Include="VanDerLinde\Permutation.cs" />

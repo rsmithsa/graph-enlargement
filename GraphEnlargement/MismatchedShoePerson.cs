@@ -4,19 +4,18 @@
 // </copyright>
 //-----------------------------------------------------------------------
 
-namespace GraphEnlargementDemo
+namespace GraphEnlargement
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
-    using GraphEnlargement;
 
     /// <summary>
     /// A person with differing left and right shoe sizes.
     /// </summary>
-    internal class MismatchedShoePerson : IGraphEnlargementVertex
+    public class MismatchedShoePerson : IGraphEnlargementVertex
     {
         /// <summary>
         /// Gets or sets the name of the person.
@@ -36,20 +35,19 @@ namespace GraphEnlargementDemo
         /// <value>The size of the right shoe.</value>
         public int RightSize { get; set; }
 
-        /// <summary>
-        /// Returns a <see cref="string" /> that represents this instance.
-        /// </summary>
-        /// <returns>A <see cref="string" /> that represents this instance.</returns>
+        /// <inheritdoc />
         public override string ToString()
         {
             return $"{this.Name} [{this.LeftSize}, {this.RightSize}]";
         }
 
+        /// <inheritdoc />
         public object GetKey()
         {
             return this.LeftSize;
         }
 
+        /// <inheritdoc />
         public object GetTarget()
         {
             return this.RightSize;

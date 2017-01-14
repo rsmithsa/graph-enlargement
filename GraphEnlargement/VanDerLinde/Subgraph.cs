@@ -81,7 +81,7 @@ namespace GraphEnlargement.VanDerLinde
 
             // Reverse needed to match behaviour of van der Linde.
             nonRepeatedCycles.Reverse();
-            var longest = nonRepeatedCycles.MaxBy(x => x.SelectMany(y => y).Count());
+            var longest = nonRepeatedCycles.Count == 0 ? Enumerable.Empty<TVertex[]>() : nonRepeatedCycles.MaxBy(x => x.SelectMany(y => y).Count());
 
             foreach (var cycle in longest)
             {
