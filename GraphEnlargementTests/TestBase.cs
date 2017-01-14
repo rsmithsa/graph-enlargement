@@ -12,6 +12,9 @@ namespace GraphEnlargementTests
     using System.Text;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// Base class for unit tests.
+    /// </summary>
     public abstract class TestBase
     {
     }

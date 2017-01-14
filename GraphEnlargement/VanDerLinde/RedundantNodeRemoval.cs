@@ -30,8 +30,8 @@ namespace GraphEnlargement.VanDerLinde
             {
                 if (vertex.GetKey().Equals(vertex.GetTarget()))
                 {
-                    var inEdges = result.InEdges(vertex);
-                    var outEdges = result.OutEdges(vertex);
+                    var inEdges = result.InEdges(vertex).ToArray();
+                    var outEdges = result.OutEdges(vertex).ToArray();
 
                     foreach (var inEdge in inEdges)
                     {

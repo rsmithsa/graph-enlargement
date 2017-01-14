@@ -9,15 +9,25 @@ namespace GraphEnlargement
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Runtime.CompilerServices;
     using System.Text;
     using System.Threading.Tasks;
     using QuickGraph;
     using QuickGraph.Algorithms;
 
+    /// <summary>
+    /// Various helper graph extension methods.
+    /// </summary>
     public static class GraphExtensions
     {
-        public static HashSet<TVertex> GetVerticesNotInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph) where TVertex : class
+        /// <summary>
+        /// Gets the graph vertices not contained in cycles.
+        /// </summary>
+        /// <typeparam name="TVertex">The type of the vertex.</typeparam>
+        /// <param name="inputGraph">The input graph.</param>
+        /// <returns>The graph vertices not contained in cycles.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="inputGraph"/> is null.</exception>
+        public static HashSet<TVertex> GetVerticesNotInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
+            where TVertex : class
         {
             if (inputGraph == null)
             {
@@ -37,7 +47,15 @@ namespace GraphEnlargement
             return result;
         }
 
-        public static HashSet<TVertex> GetVerticesInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph) where TVertex : class
+        /// <summary>
+        /// Gets the graph vertices contained in cycles.
+        /// </summary>
+        /// <typeparam name="TVertex">The type of the vertex.</typeparam>
+        /// <param name="inputGraph">The input graph.</param>
+        /// <returns>The graph vertices contained in cycles.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="inputGraph"/> is null.</exception>
+        public static HashSet<TVertex> GetVerticesInCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
+            where TVertex : class
         {
             if (inputGraph == null)
             {
@@ -51,7 +69,15 @@ namespace GraphEnlargement
             return vertices;
         }
 
-        public static IList<TVertex[]> GetCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph) where TVertex : class
+        /// <summary>
+        /// Gets the cycles in the graph using Johnson's algorithm.
+        /// </summary>
+        /// <typeparam name="TVertex">The type of the vertex.</typeparam>
+        /// <param name="inputGraph">The input graph.</param>
+        /// <returns>The cycles in the graph.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="inputGraph"/> is null.</exception>
+        public static IList<TVertex[]> GetCycles<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
+            where TVertex : class
         {
             if (inputGraph == null)
             {
@@ -63,8 +89,20 @@ namespace GraphEnlargement
             return johnsons.Cycles;
         }
 
+        /// <summary>
+        /// Gets a string description of the graph.
+        /// </summary>
+        /// <typeparam name="TVertex">The type of the vertex.</typeparam>
+        /// <param name="inputGraph">The input graph.</param>
+        /// <returns>A string description of the graph.</returns>
+        /// <exception cref="ArgumentNullException">The <paramref name="inputGraph"/> is null.</exception>
         public static string GetDescription<TVertex>(this BidirectionalGraph<TVertex, Edge<TVertex>> inputGraph)
         {
+            if (inputGraph == null)
+            {
+                throw new ArgumentNullException(nameof(inputGraph));
+            }
+
             return $"(Vertices - {inputGraph.VertexCount}, Edges - {inputGraph.EdgeCount})";
         }
     }

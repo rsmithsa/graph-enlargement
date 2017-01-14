@@ -13,6 +13,10 @@ namespace GraphEnlargement.Smith
     using System.Threading.Tasks;
     using QuickGraph;
 
+    /// <summary>
+    /// The revised subgraph graph expansion algorithm from:
+    /// R. Smith. Research Project - Cycle Picking and Graph Enlargement - Permutation Subgraphs.
+    /// </summary>
     public class RevisedSubGraph : IGraphEnlargementAlgorithm
     {
         private readonly IGraphEnlargementAlgorithm subAlgorithm;

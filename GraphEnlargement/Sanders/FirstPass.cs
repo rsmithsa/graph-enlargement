@@ -9,11 +9,9 @@ namespace GraphEnlargement.Sanders
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Net.Configuration;
     using System.Text;
     using System.Threading.Tasks;
     using QuickGraph;
-    using QuickGraph.Algorithms;
 
     /// <summary>
     /// The first pass graph expansion algorith from:

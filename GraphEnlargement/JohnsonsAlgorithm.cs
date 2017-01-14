@@ -16,10 +16,10 @@ namespace GraphEnlargement
 
     public class JohnsonsAlgorithm<TVertex>
     {
-        private Dictionary<int, bool> blocked = new Dictionary<int, bool>();
-        private Dictionary<int, List<int>> blockedNext = new Dictionary<int, List<int>>();
+        private readonly Dictionary<int, bool> blocked = new Dictionary<int, bool>();
+        private readonly Dictionary<int, List<int>> blockedNext = new Dictionary<int, List<int>>();
 
-        private List<List<int>> cycles = new List<List<int>>();
+        private readonly List<List<int>> cycles = new List<List<int>>();
 
         private Dictionary<int, TVertex> verticesMap;
 

@@ -14,7 +14,6 @@ namespace GraphEnlargement.VanDerLinde
     using Combinatorics.Collections;
     using MoreLinq;
     using QuickGraph;
-    using QuickGraph.Algorithms;
 
     /// <summary>
     /// The subgraph graph expansion algorithm from:

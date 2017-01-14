@@ -12,7 +12,6 @@ namespace GraphEnlargement.VanDerLinde
     using System.Text;
     using System.Threading.Tasks;
     using QuickGraph;
-    using QuickGraph.Algorithms;
 
     /// <summary>
     /// The second pass cost optimised graph expansion algorithm from:
