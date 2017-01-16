@@ -27,8 +27,8 @@ namespace GraphEnlargementTests
     [TestClass]
     public class PerformanceTests : TestBase
     {
-        public const int Start = 16;
-        public const int End = 512;
+        public const int Start = 32;
+        public const int End = 4096;
         public static readonly int[] Seeds = { 1434747710, 302596119, 269548474 };
 
         [TestMethod]
@@ -54,6 +54,17 @@ namespace GraphEnlargementTests
         }
 
         [TestMethod]
+        public void TestCostOptimisedPerformance()
+        {
+            foreach (var seed in Seeds)
+            {
+                var random = new Random(seed);
+
+                ExecuteAlgorithms(random, new CostOptimisedFirstPass(), new SecondPass());
+            }
+        }
+
+        [TestMethod]
         public void TestPermutationSubgraphPerformance()
         {
             foreach (var seed in Seeds)
@@ -65,6 +76,17 @@ namespace GraphEnlargementTests
         }
 
         [TestMethod]
+        public void TestCostOptimisedSubgraphPerformance()
+        {
+            foreach (var seed in Seeds)
+            {
+                var random = new Random(seed);
+
+                ExecuteAlgorithms(random, new Subgraph(new GraphEnlargementAlgorithmChain(new IGraphEnlargementAlgorithm[] { new CostOptimisedFirstPass(), new SecondPass() })));
+            }
+        }
+
+        [TestMethod]
         public void TestPermutationRevisedSubgraphPerformance()
         {
             foreach (var seed in Seeds)
@@ -72,6 +94,17 @@ namespace GraphEnlargementTests
                 var random = new Random(seed);
 
                 ExecuteAlgorithms(random, new RevisedSubgraph(new Permutation()));
+            }
+        }
+
+        [TestMethod]
+        public void TestCostOptimisedRevisdSubgraphPerformance()
+        {
+            foreach (var seed in Seeds)
+            {
+                var random = new Random(seed);
+
+                ExecuteAlgorithms(random, new RevisedSubgraph(new GraphEnlargementAlgorithmChain(new IGraphEnlargementAlgorithm[] { new CostOptimisedFirstPass(), new SecondPass() })));
             }
         }
 
@@ -89,9 +122,9 @@ namespace GraphEnlargementTests
 
                 Console.WriteLine($"Input: {GetGraphInformation(graph)}");
 
+                BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> result = graph;
                 try
                 {
-                    BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> result = graph;
                     var sw = Stopwatch.StartNew();
 
                     foreach (var algorithm in algorithms)
@@ -109,6 +142,11 @@ namespace GraphEnlargementTests
                 {
                     Console.WriteLine($"Failed: {ex}");
                     break;
+                }
+
+                if (!ValidateCycles(result))
+                {
+                    Assert.Fail("Output graph not valid.");
                 }
             }
         }

@@ -61,8 +61,15 @@ namespace GraphEnlargement.VanDerLinde
 
                         if (last == null)
                         {
-                            last = use.Dequeue();
-                            use.Enqueue(last);
+                            if (use.Count > 0)
+                            {
+                                last = use.Dequeue();
+                                use.Enqueue(last);
+                            }
+                            else
+                            {
+                                last = first;
+                            }
                         }
 
                         var dummy1 = vertexFactory("Dummy 1", first, mid);
@@ -101,10 +108,18 @@ namespace GraphEnlargement.VanDerLinde
                                 }
                             }
                         }
-                        else
+
+                        if (first == null)
                         {
-                            first = use.Dequeue();
-                            use.Enqueue(first);
+                            if (use.Count > 0)
+                            {
+                                first = use.Dequeue();
+                                use.Enqueue(first);
+                            }
+                            else
+                            {
+                                first = last;
+                            }
                         }
                     }
 
@@ -131,8 +146,15 @@ namespace GraphEnlargement.VanDerLinde
 
                         if (last == null)
                         {
-                            last = use.Dequeue();
-                            use.Enqueue(last);
+                            if (use.Count > 0)
+                            {
+                                last = use.Dequeue();
+                                use.Enqueue(last);
+                            }
+                            else
+                            {
+                                last = first;
+                            }
                         }
                     }
 
