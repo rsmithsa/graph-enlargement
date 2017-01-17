@@ -16,9 +16,7 @@ namespace GraphEnlargementTests
     using GraphEnlargement.Sanders;
     using GraphEnlargement.Smith;
     using GraphEnlargement.VanDerLinde;
-
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-
     using QuickGraph;
 
     /// <summary>
@@ -110,6 +108,8 @@ namespace GraphEnlargementTests
 
         private static void ExecuteAlgorithms(Random random, params IGraphEnlargementAlgorithm[] algorithms)
         {
+            var excel = new StringBuilder();
+
             for (int i = Start; i <= End; i *= 2)
             {
                 BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> graph;
@@ -121,6 +121,7 @@ namespace GraphEnlargementTests
                 while (graph.GetVerticesNotInCycles().Count == 0);
 
                 Console.WriteLine($"Input: {GetGraphInformation(graph)}");
+                excel.Append($"{i}\t");
 
                 BidirectionalGraph<MismatchedShoePerson, Edge<MismatchedShoePerson>> result = graph;
                 try
@@ -137,10 +138,12 @@ namespace GraphEnlargementTests
                     sw.Stop();
 
                     Console.WriteLine($"Output: {GetGraphInformation(result, sw)}");
+                    excel.AppendLine($"{result.VertexCount}\t{sw.ElapsedMilliseconds}");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Failed: {ex}");
+                    excel.AppendLine($"Error\tError");
                     break;
                 }
 
@@ -149,6 +152,8 @@ namespace GraphEnlargementTests
                     Assert.Fail("Output graph not valid.");
                 }
             }
+
+            Console.WriteLine(excel.ToString());
         }
     }
 }

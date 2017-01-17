@@ -13,6 +13,7 @@ namespace GraphEnlargementTests
     using System.Text;
     using System.Threading.Tasks;
     using GraphEnlargement;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using QuickGraph;
 
     /// <summary>
@@ -20,6 +21,18 @@ namespace GraphEnlargementTests
     /// </summary>
     public abstract class TestBase
     {
+        [TestInitialize]
+        public virtual void Initialise()
+        {
+            bool isDebug = false;
+#if DEBUG
+            isDebug = true;
+#endif
+
+            Console.WriteLine($"{(isDebug ? "Debug" : "Release")} - {(Environment.Is64BitProcess ? "x64" : "x86" )}");
+            Console.WriteLine();
+        }
+
         public static List<MismatchedShoePerson> GenerateInput(int count, Random random, bool excludeSelfCycles)
         {
             var result = new List<MismatchedShoePerson>();
